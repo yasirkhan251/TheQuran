@@ -33,7 +33,7 @@
 "use strict";
 var API="https://api.alquran.cloud/v1";
 var listEl=document.getElementById("surahList"),readerEl=document.getElementById("readerContent"),searchEl=document.getElementById("search"),countEl=document.getElementById("surahCount"),toastEl=document.getElementById("toast");
-var surahs=[],currentSurah=null,currentVerses=[],arabicSize=32,toastTimer=null,audioAyahs=[],audioPlayer=null,progressObserver=null;
+var surahs=[],currentSurah=null,currentVerses=[],arabicSize=32,toastTimer=null,audioAyahs=[],audioPlayer=null,progressObserver=null,loadToken=0;
 var saved;
 try{saved=new Set(JSON.parse(localStorage.getItem("thequran-bookmarks")||"[]"));}catch(e){saved=new Set();}
 function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -59,15 +59,17 @@ function updateProgress(index){var total=currentVerses.length;if(!total)return;v
 }
 async function openSurah(number,scroll){
  var s=surahs.find(function(item){return item.number===Number(number);});if(!s)return;
- currentSurah=s;currentVerses=[];renderList();loading(s.englishName);localStorage.setItem("thequran-last-surah",String(s.number));
+ var requestToken=++loadToken;currentSurah=s;currentVerses=[];renderList();loading(s.englishName);localStorage.setItem("thequran-last-surah",String(s.number));
  if(scroll&&window.innerWidth<900)document.getElementById("reader").scrollIntoView({behavior:"smooth",block:"start"});
  try{
   var cacheKey="thequran-cache-"+s.number;var data;try{data=await fetchData(API+"/surah/"+s.number+"/editions/quran-uthmani,en.sahih");try{localStorage.setItem(cacheKey,JSON.stringify(data));}catch(cacheError){console.warn("Local cache is full; continuing online.",cacheError);}}catch(networkError){var cached=localStorage.getItem(cacheKey);if(!cached)throw networkError;data=JSON.parse(cached);toast("Offline mode: showing the saved copy of this chapter");}
+  if(requestToken!==loadToken)return;
   var arabic=data.find(function(item){return item.edition.identifier==="quran-uthmani";})||data[0];
   var english=data.find(function(item){return item.edition.identifier==="en.sahih";})||data[1];
   currentVerses=arabic.ayahs.map(function(a,i){return {arabic:a.text,translation:english.ayahs[i]?english.ayahs[i].text:"Translation unavailable"};});audioAyahs=[];
   if(currentSurah&&currentSurah.number===s.number)renderReader();
  }catch(error){
+  if(requestToken!==loadToken)return;
   readerEl.innerHTML='<div class="reader-head"><div class="reader-kicker">Surah '+s.number+'</div><h2 class="reader-title">'+esc(s.englishName)+'</h2></div><div class="error">We could not load the Qur’an text right now.<br>Check your internet connection and try again.<br><br><button type="button" class="tool" id="retry">Try again</button><div class="notice">The app retrieves the text from AlQuran Cloud. It does not substitute generated verse text.</div></div>';
   document.getElementById("retry").addEventListener("click",function(){openSurah(s.number,false);});console.error(error);
  }
