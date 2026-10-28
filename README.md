@@ -12,6 +12,9 @@ A free, responsive Qur'an reader prototype built as a single HTML file.
 
 - Index of all 114 surahs, with search by name or number.
 - Arabic text from the `quran-uthmani` edition and English translation `en.sahih`.
+- Urdu translation `ur.jalandhry` (Fateh Muhammad Jalandhry).
+- Roman Urdu translation `ur-Latn.maududi` (Syed Abul Ala Maududi) loaded from the Rasikh API, with Quranic Universal Library (Tarteel) attribution and non-commercial use terms.
+- Per-verse Urdu translation speech using the browser/device speech engine when an Urdu voice is installed. Voice availability varies by device/browser; it is not a pre-recorded scholar recitation.
 - Previous/next surah navigation and direct chapter links using the URL hash.
 - Adjustable Arabic text size.
 - Local bookmarks, a saved-verse library with jump-to-verse navigation, and copy-verse actions.
@@ -35,6 +38,8 @@ The check requests the 114 surahs and verifies the API-reported total of 6,236 a
 
 - Arabic Qur'an text: Uthmani edition, identifier `quran-uthmani`, served by [AlQuran Cloud](https://alquran.cloud/api).
 - English translation: Saheeh International, identifier `en.sahih`, served by AlQuran Cloud.
+- Urdu translation: Fateh Muhammad Jalandhry, identifier `ur.jalandhry`, served by AlQuran Cloud.
+- Roman Urdu translation: Syed Abul Ala Maududi, identifier `ur-Latn.maududi`, via [Rasikh API](https://api.rasikh.ai/v1) and Quranic Universal Library (Tarteel). Non-commercial use and source-attribution conditions apply; the app displays attribution and does not rewrite the translation.
 - Audio recitation: Mishary Rashid Alafasy, identifier `ar.alafasy`, streamed from AlQuran Cloud.
 - The app displays the API-provided text without generating or paraphrasing verses. Browser auto-translation is discouraged because it can alter the meaning of a vetted translation.
 
