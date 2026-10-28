@@ -62,11 +62,11 @@ async function openSurah(number,scroll){
  var requestToken=++loadToken;if(audioPlayer){audioPlayer.pause();audioPlayer=null;}currentSurah=s;currentVerses=[];renderList();loading(s.englishName);localStorage.setItem("thequran-last-surah",String(s.number));
  if(scroll&&window.innerWidth<900)document.getElementById("reader").scrollIntoView({behavior:"smooth",block:"start"});
  try{
-  var cacheKey="thequran-cache-"+s.number;var data;try{data=await fetchData(API+"/surah/"+s.number+"/editions/quran-uthmani,en.sahih");try{localStorage.setItem(cacheKey,JSON.stringify(data));}catch(cacheError){console.warn("Local cache is full; continuing online.",cacheError);}}catch(networkError){var cached=localStorage.getItem(cacheKey);if(!cached)throw networkError;data=JSON.parse(cached);toast("Offline mode: showing the saved copy of this chapter");}
+  var cacheKey="thequran-cache-"+s.number;var data;try{data=await fetchData(API+"/surah/"+s.number+"/editions/quran-uthmani,en.sahih,ur.jalandhry");try{localStorage.setItem(cacheKey,JSON.stringify(data));}catch(cacheError){console.warn("Local cache is full; continuing online.",cacheError);}}catch(networkError){var cached=localStorage.getItem(cacheKey);if(!cached)throw networkError;data=JSON.parse(cached);toast("Offline mode: showing the saved copy of this chapter");}
   if(requestToken!==loadToken)return;
   var arabic=data.find(function(item){return item.edition.identifier==="quran-uthmani";})||data[0];
-  var english=data.find(function(item){return item.edition.identifier==="en.sahih";})||data[1];
-  currentVerses=arabic.ayahs.map(function(a,i){return {arabic:a.text,translation:english.ayahs[i]?english.ayahs[i].text:"Translation unavailable"};});audioAyahs=[];
+  var english=data.find(function(item){return item.edition.identifier==="en.sahih";})||data[1];var urdu=data.find(function(item){return item.edition.identifier==="ur.jalandhry";});
+  currentVerses=arabic.ayahs.map(function(a,i){return {arabic:a.text,translation:english.ayahs[i]?english.ayahs[i].text:"Translation unavailable",urdu:urdu&&urdu.ayahs[i]?urdu.ayahs[i].text:"Urdu translation unavailable"};});audioAyahs=[];
   if(currentSurah&&currentSurah.number===s.number)renderReader();
  }catch(error){
   if(requestToken!==loadToken)return;
