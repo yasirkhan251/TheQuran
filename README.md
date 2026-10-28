@@ -21,6 +21,16 @@ A free, responsive Qur'an reader prototype built as a single HTML file.
 - Retry/error states when the content API is unavailable.
 - Responsive layout and keyboard-visible focus styles.
 
+## Run the structural content check
+
+With Node.js 18 or newer and an internet connection, run:
+
+```bash
+node scripts/verify-content.js
+```
+
+The check requests the 114 surahs and verifies the API-reported total of 6,236 ayahs, Arabic/English verse counts, non-empty text fields, and sequential numbering. It is a structural/API consistency check—not an independent verification of the exact Arabic wording or scholarly approval of a translation.
+
 ## Content sources and integrity
 
 - Arabic Qur'an text: Uthmani edition, identifier `quran-uthmani`, served by [AlQuran Cloud](https://alquran.cloud/api).
