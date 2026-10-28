@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#123c32">
-<meta name="description" content="A calm, free Qur'an reader with Arabic text, English translation, surah index and bookmarks.">
+<meta name="description" content="A free Quran reader with Arabic text, Saheeh International English translation, audio recitation, bookmarks and reading progress."><meta name="google" content="notranslate">
 <title>The Qur'an — Read & Reflect</title>
 <style>
 :root{--green:#123c32;--green2:#245b49;--mint:#eaf2eb;--paper:#faf9f5;--ink:#202b25;--muted:#6b776f;--line:#e2e7e0;--gold:#cfb477;--white:#fff;--shadow:0 12px 36px #123c3210}
@@ -26,7 +26,7 @@
   <aside class="panel"><div class="panel-head"><h3>Surah index</h3><span class="muted" id="surahCount">Loading…</span></div><nav class="surah-list" id="surahList" aria-label="Qur'an chapters"><div class="loading"><div class="spinner"></div>Loading the chapter index…</div></nav></aside>
   <section class="panel" id="reader" aria-live="polite"><div id="readerContent"><div class="loading"><div class="spinner"></div>Preparing your reader…</div></div></section>
 </main>
-<footer class="footer">A free learning project created for personal study and community benefit.<br>Translations are interpretations of meaning. Consult trusted scholarship for detailed tafsir.</footer>
+<footer class="footer">A free learning project created for personal study and community benefit.<br>Arabic text: Uthmani edition via AlQuran Cloud. English translation: Saheeh International (en.sahih). Audio recitation: Mishary Rashid Alafasy, streamed via AlQuran Cloud.<br>Translations are interpretations of meaning. Tafsir is not yet included; consult trusted scholarship for detailed explanation.</footer>
 <div class="toast" id="toast" role="status"></div>
 <script>
 (function(){
@@ -62,7 +62,7 @@ async function openSurah(number,scroll){
  currentSurah=s;currentVerses=[];renderList();loading(s.englishName);localStorage.setItem("thequran-last-surah",String(s.number));
  if(scroll&&window.innerWidth<900)document.getElementById("reader").scrollIntoView({behavior:"smooth",block:"start"});
  try{
-  var cacheKey="thequran-cache-"+s.number;var data;try{data=await fetchData(API+"/surah/"+s.number+"/editions/quran-uthmani,en.sahih");localStorage.setItem(cacheKey,JSON.stringify(data));}catch(networkError){var cached=localStorage.getItem(cacheKey);if(!cached)throw networkError;data=JSON.parse(cached);toast("Offline mode: showing the saved copy of this chapter");}
+  var cacheKey="thequran-cache-"+s.number;var data;try{data=await fetchData(API+"/surah/"+s.number+"/editions/quran-uthmani,en.sahih");try{localStorage.setItem(cacheKey,JSON.stringify(data));}catch(cacheError){console.warn("Local cache is full; continuing online.",cacheError);}}catch(networkError){var cached=localStorage.getItem(cacheKey);if(!cached)throw networkError;data=JSON.parse(cached);toast("Offline mode: showing the saved copy of this chapter");}
   var arabic=data.find(function(item){return item.edition.identifier==="quran-uthmani";})||data[0];
   var english=data.find(function(item){return item.edition.identifier==="en.sahih";})||data[1];
   currentVerses=arabic.ayahs.map(function(a,i){return {arabic:a.text,translation:english.ayahs[i]?english.ayahs[i].text:"Translation unavailable"};});audioAyahs=[];
@@ -82,7 +82,7 @@ searchEl.addEventListener("input",renderList);
 document.getElementById("fontDown").addEventListener("click",function(){arabicSize=Math.max(22,arabicSize-2);document.querySelectorAll(".arabic").forEach(function(el){el.style.fontSize=arabicSize+"px";});});
 document.getElementById("fontUp").addEventListener("click",function(){arabicSize=Math.min(46,arabicSize+2);document.querySelectorAll(".arabic").forEach(function(el){el.style.fontSize=arabicSize+"px";});});
 document.getElementById("resumeBtn").addEventListener("click",function(){openSurah(Number(localStorage.getItem("thequran-last-surah"))||1,true);});
-async function init(){try{try{surahs=await fetchData(API+"/surah");localStorage.setItem("thequran-surah-index",JSON.stringify(surahs));}catch(indexError){var savedIndex=localStorage.getItem("thequran-surah-index");if(!savedIndex)throw indexError;surahs=JSON.parse(savedIndex);toast("Offline mode: using the saved chapter index");}renderList();var match=location.hash.match(/surah\/(\d+)/);var initial=match?Number(match[1]):Number(localStorage.getItem("thequran-last-surah"))||1;await openSurah(initial,false);}catch(error){listEl.innerHTML='<div class="error">Could not load the surah index. Check your internet connection and reload.</div>';readerEl.innerHTML='<div class="error">The Qur’an content service is unavailable. Please try again later.</div>';countEl.textContent="Unavailable";console.error(error);}}
+async function init(){try{try{surahs=await fetchData(API+"/surah");try{localStorage.setItem("thequran-surah-index",JSON.stringify(surahs));}catch(cacheError){console.warn("Could not cache chapter index.",cacheError);}}catch(indexError){var savedIndex=localStorage.getItem("thequran-surah-index");if(!savedIndex)throw indexError;surahs=JSON.parse(savedIndex);toast("Offline mode: using the saved chapter index");}renderList();var match=location.hash.match(/surah\/(\d+)/);var initial=match?Number(match[1]):Number(localStorage.getItem("thequran-last-surah"))||1;await openSurah(initial,false);}catch(error){listEl.innerHTML='<div class="error">Could not load the surah index. Check your internet connection and reload.</div>';readerEl.innerHTML='<div class="error">The Qur’an content service is unavailable. Please try again later.</div>';countEl.textContent="Unavailable";console.error(error);}}
 init();
 })();
 </script>
