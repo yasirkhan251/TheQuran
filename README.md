@@ -14,7 +14,7 @@ A free, responsive Qur'an reader prototype built as a single HTML file.
 - Arabic text from the `quran-uthmani` edition and English translation `en.sahih`.
 - Previous/next surah navigation and direct chapter links using the URL hash.
 - Adjustable Arabic text size.
-- Local bookmarks and copy-verse actions.
+- Local bookmarks, a saved-verse library with jump-to-verse navigation, and copy-verse actions.
 - Last-read surah and verse progress saved on this device.
 - Verse-by-verse recitation streamed from the `ar.alafasy` edition.
 - Best-effort local cache for the chapter index and chapters already opened.
